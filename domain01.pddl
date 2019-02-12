@@ -1,90 +1,98 @@
-(define (domain openstacks-sequencedstrips-nonADL-nonNegated)
-(:requirements :typing )
-(:types order product count)
-(:constants 
- p1 p2 p3 p4 p5 - product
- o1 o2 o3 o4 o5 - order
+(define (domain robot)
+  (:requirements :strips :negative-preconditions :typing)
+  (:types
+     PACKAGE
+     ROOM
+     ROOMDOOR
+     )
+  (:predicates
+    (armempty)
+    (rloc ?loc - ROOM)
+    (in ?obj - PACKAGE ?loc - ROOM)
+    (holding ?obj - PACKAGE)
+    (closed ?d - ROOMDOOR)
+    (door ?loc1 - ROOM ?loc2 - ROOM ?d - ROOMDOOR)
+
+    (goal_in ?obj - PACKAGE ?loc - ROOM))
+  (:tasks
+    (achieve-goals)
+    (release)
+    (pickup ?obj - PACKAGE)
+    (putdown)
+    (move)
+    (open))
+
+(:action pickup
+ :parameters (?obj - PACKAGE ?loc - ROOM)
+ :task (pickup ?obj)
+ :precondition (and (armempty) (rloc ?loc) (in ?obj ?loc))
+ :effect (and (not (in ?obj ?loc)) (not (armempty)) (holding ?obj))
 )
 
-(:predicates 
-	(includes ?o - order ?p - product)
-	(waiting ?o - order)
-	(started ?o - order)
-	(shipped ?o - order)
-	(made ?p - product)
-	(not-made ?p - product)
-	(stacks-avail ?s - count)
-	(next-count ?s ?ns - count)
+(:action putdown
+ :parameters (?obj - PACKAGE ?loc - ROOM)
+ :task (putdown)
+ :precondition (and (rloc ?loc) (holding ?obj) (goal_in ?obj ?loc))
+ :effect (and (not (holding ?obj)) (armempty) (in ?obj ?loc))
 )
 
-
-
-(:action open-new-stack
-:parameters (?open ?new-open - count)
-:precondition (and (stacks-avail ?open)(next-count ?open ?new-open))
-:effect (and (not (stacks-avail ?open))(stacks-avail ?new-open) )
+(:action move
+ :parameters (?loc1 - ROOM ?loc2 - ROOM ?d - ROOMDOOR)
+ :task (move)
+ :precondition
+ (and (rloc ?loc1) (door ?loc1 ?loc2 ?d) (not (closed ?d)))
+ :effect
+ (and (rloc ?loc2) (not (rloc ?loc1)))
 )
 
-(:action start-order
-:parameters (?o - order ?avail ?new-avail - count)
-:precondition (and (waiting ?o)(stacks-avail ?avail)(next-count ?new-avail ?avail))
-:effect (and (not (waiting ?o))(started ?o)(not (stacks-avail ?avail))(stacks-avail ?new-avail))
+(:action open
+ :parameters (?loc1 - ROOM ?loc2 - ROOM ?d - ROOMDOOR)
+ :task (open)
+ :precondition
+ (and (rloc ?loc1) (door ?loc1 ?loc2 ?d) (closed ?d))
+ :effect
+ (and (not (closed ?d)))
 )
 
-(:action make-product-p1
-:parameters ()
-:precondition (and (not-made p1)(started o2))
-:effect (and (not (not-made p1)) (made p1))
-)
+(:method release-putdown
+ :task (release)
+ :precondition (exists (?loc - ROOM ?obj - PACKAGE)
+    (and
+        (rloc ?loc)
+        (holding ?obj)
+        (goal_in ?obj ?loc)))
+ :tasks ((putdown) (achieve-goals)))
 
-(:action make-product-p2
-:parameters ()
-:precondition (and (not-made p2)(started o1)(started o2))
-:effect (and (not (not-made p2)) (made p2))
-)
+(:method release-move
+ :task (release)
+ :tasks ((move) (release)))
 
-(:action make-product-p3
-:parameters ()
-:precondition (and (not-made p3)(started o3)(started o4))
-:effect (and (not (not-made p3)) (made p3))
-)
+(:method release-open
+ :task (release)
+ :tasks ((open) (release)))
 
-(:action make-product-p4
-:parameters ()
-:precondition (and (not-made p4)(started o4))
-:effect (and (not (not-made p4)) (made p4))
-)
 
-(:action make-product-p5
-:parameters ()
-:precondition (and (not-made p5)(started o5))
-:effect (and (not (not-made p5)) (made p5))
-)
+(:method achieve-goals-pickup
+ :parameters (?obj - PACKAGE)
+ :task (achieve-goals)
+ :precondition (exists (?loc - ROOM) (and
+        (rloc ?loc)
+        (in ?obj ?loc)
+        (not (goal_in ?obj ?loc))))
+ :tasks ((pickup ?obj) (release)))
 
-(:action ship-order-o1
-:parameters (?avail ?new-avail - count)
-:precondition (and (started o1)(made p2)(stacks-avail ?avail)(next-count ?avail ?new-avail))
-:effect (and (not (started o1))(shipped o1)(not (stacks-avail ?avail))(stacks-avail ?new-avail)))
+(:method achieve-goals-move
+ :task (achieve-goals)
+ :tasks ((move) (achieve-goals)))
 
-(:action ship-order-o2
-:parameters (?avail ?new-avail - count)
-:precondition (and (started o2)(made p1)(made p2)(stacks-avail ?avail)(next-count ?avail ?new-avail))
-:effect (and (not (started o2))(shipped o2)(not (stacks-avail ?avail))(stacks-avail ?new-avail)))
+(:method achieve-goals-open
+ :task (achieve-goals)
+ :tasks ((open) (achieve-goals)))
 
-(:action ship-order-o3
-:parameters (?avail ?new-avail - count)
-:precondition (and (started o3)(made p3)(stacks-avail ?avail)(next-count ?avail ?new-avail))
-:effect (and (not (started o3))(shipped o3)(not (stacks-avail ?avail))(stacks-avail ?new-avail)))
 
-(:action ship-order-o4
-:parameters (?avail ?new-avail - count)
-:precondition (and (started o4)(made p3)(made p4)(stacks-avail ?avail)(next-count ?avail ?new-avail))
-:effect (and (not (started o4))(shipped o4)(not (stacks-avail ?avail))(stacks-avail ?new-avail)))
-
-(:action ship-order-o5
-:parameters (?avail ?new-avail - count)
-:precondition (and (started o5)(made p5)(stacks-avail ?avail)(next-count ?avail ?new-avail))
-:effect (and (not (started o5))(shipped o5)(not (stacks-avail ?avail))(stacks-avail ?new-avail)))
-
-)
-
+(:method finished
+ :task (achieve-goals)
+ :precondition (forall (?obj - PACKAGE)
+    (exists (?loc - ROOM) (and
+        (goal_in ?obj ?loc)
+        (in ?obj ?loc
