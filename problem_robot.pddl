@@ -13,7 +13,6 @@
         (r_in_room ?rob - Robot ?loc1 - Room)
         (in ?obj - Package ?loc2 - Room)
         (door ?loc1 - Room ?loc2 - Room ?d - Room_door)
-
     )
 
     (:goal
