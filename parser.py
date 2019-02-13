@@ -1,4 +1,4 @@
-Name_file = "/Users/liza/domain-htn.hddl";
+Name_file = "/Users/liza/domain01.pddl";
 import re
 import copy
 
@@ -58,14 +58,13 @@ def get_actions(lines):
     param = []
     precond = []
     effect = []
-    name = lines[0].strip('(:action').split()
+    name = lines[0].split()
+    name = name[1:]
+    lines[1] = re.sub('[)(-]', '', lines[1])
+    param = lines[1].split()
+    param = param[1:]
     for i in range(len(lines)):
-        if lines[i].find(':parameters') != -1:
-            lines[i] = lines[i].strip('(').strip(')').strip(':parameters')
-            lines[i] = lines[i].split()
-            for j in range(len(lines[i])):
-                param.append(lines[i][j]);
-        elif lines[i].find(':precondition') != -1:
+        if lines[i].find(':precondition') != -1:
             end = i;
             brackets = 0;
             for ir in range(i + 1, len(lines)):
@@ -116,18 +115,18 @@ class Method:
 def get_methods(lines):
     name, param, task, subtask, ord = [], [], [], [], []
     methods = []
-    name = lines[0].strip('(:method').split()
+    name = lines[0].split()
+    name = name[1:]
+    lines[1] = re.sub('[)(-]', '', lines[1])
+    param = lines[1].split()
+    param = param[1:]
     for i in range(len(lines)):
-        if lines[i].find(':parameters') != -1:
-            lines[i] = lines[i].strip('(').strip(')').strip(':parameters')
-            lines[i] = lines[i].split()
-            for j in range(len(lines[i])):
-                param.append(lines[i][j])
-        elif lines[i].find(':task') != -1:
-            lines[i] = re.sub('[)(]', '', lines[i])
-            lines[i] = lines[i].split()
-            for j in range(1, len(lines[i])):
-                task.append(lines[i][j])
+        if lines[i].find(':task') != -1:
+            lines[i] = re.sub('[)(:]', '', lines[i][5:])
+            task.append(lines[i])
+            #lines[i] = lines[i].split()
+            #for j in range(1, len(lines[i])):
+                #task.append(lines[i][j])
         elif lines[i].find(':subtask') != -1:
             end = i;
             brackets = 0;
@@ -145,15 +144,19 @@ def get_methods(lines):
                         subtask[k] = re.sub('[)(]', '', subtask[k])
                     break;
         elif lines[i].find(':ordering') != -1:
-            lines[i + 1] = re.sub('[)(]', '', lines[i + 1])
-            ord.append(lines[i + 1])
+            lines[i + 2] = re.sub('[)(]', '', lines[i + 2])
+            i = i + 2
+            while lines[i] != ')':
+                lines[i] = re.sub('[)(]', '', lines[i])
+                ord.append(lines[i])
+                i += 1
 
     methods.append(Method(name, param, task, subtask, ord))
     for i in methods:
         print('Name:', i.name)
         print('Parameters:', i.parameters)
         print('Task:', i.task)
-        print('Subrask', i.subtask)
+        print('Subtask', i.subtask)
         print('Ordering:', i.ordering, '\n')
 
 class Task:
@@ -162,15 +165,13 @@ class Task:
         Task.parameters = parameters
 
 def get_tasks(text):
-    name = text[0].strip('(:task').split()
+    name = text[0].split()
+    name = name[1:]
     param = []
     Tasks = []
-    for i in range(len(text)):
-        if text[i].find(':parameters') != -1:
-            text[i] = text[i].strip('(').strip(')').strip(':parameters')
-            text[i] = text[i].split()
-            for j in range(len(text[i])):
-                param.append(text[i][j])
+    text[1] = re.sub('[)(-]', '', text[1])
+    param = text[1].split()
+    param = param[1:]
     Tasks.append(Task(name, param))
     for i in Tasks:
         print('Name:', i.name)
