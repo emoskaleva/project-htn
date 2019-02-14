@@ -13,6 +13,7 @@
         (in ?obj - Package ?loc - Room)
         (closed ?d - Room_door)
         (door ?loc1 - Room ?loc2 - Room ?d - Room_door)
+    )
 
     (:action pick_up
         :parameters (?obj - Package ?rob - Robot, ?loc - Room)
