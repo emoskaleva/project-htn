@@ -1,4 +1,4 @@
-Name_file = "/Users/liza/problem_robot.pddl";
+#Name_file = "/Users/liza/problem_robot.pddl";
 import re
 
 obj = []
