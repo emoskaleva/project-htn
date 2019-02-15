@@ -4,7 +4,8 @@
     (:objects
         r - Robot
         obj - Package
-        loc1 loc2 - Room
+        loc1 - Room
+        loc2 - Room
         d - Room_door
     )
 
