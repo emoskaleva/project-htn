@@ -1,7 +1,9 @@
-Name_file = "/Users/liza/domain01.pddl";
+Name_file = "/Users/liza/domain_robot.pddl";
 import re
 import copy
 
+
+a = []
 def get_requirements(line):
     line = line.strip('(').strip(')')
     line = line.split()
@@ -47,22 +49,25 @@ def get_part(index, file):
 
 class Action:
     def __init__(self, name, parameters, precondition, effect):
-        Action.name = name
-        Action.parameters = parameters
-        Action.precondition = precondition
-        Action.effect = effect
+        self.name = name
+        self.parameters = parameters
+        self.precondition = precondition
+        self.effect = effect
 
 
 def get_actions(lines):
-    action = []
     param = []
     precond = []
     effect = []
+    r = []
+    action = []
     name = lines[0].split()
     name = name[1:]
     lines[1] = re.sub('[)(-]', '', lines[1])
     param = lines[1].split()
     param = param[1:]
+
+        #param[i] = re.sub('[?]', '', param[i])
     for i in range(len(lines)):
         if lines[i].find(':precondition') != -1:
             end = i;
@@ -96,20 +101,22 @@ def get_actions(lines):
                     for k in range(len(effect)):
                         effect[k] = re.sub('[)(]', '', effect[k])
                     break;
-    action.append(Action(name, param, precond, effect))
-    for j in action:
-       print('Name:', j.name)
-       print('Parameters:', j.parameters)
-       print('Precondition:', j.precondition)
-       print('Effect:', j.effect, '\n')
+    action = Action(name, param, precond, effect)
+    return action
+
+    #for j in action:
+       #print('Name:', j.name)
+       #print('Parametes:', j.parameters)
+       #print('Precondition:', j.precondition)
+       #print('Effect:', j.effect, '\n')
 
 class Method:
     def __init__(self, name, parameters, task, subtask, ordering):
-        Method.name = name
-        Method.parameters = parameters
-        Method.task = task
-        Method.subtask = subtask
-        Method.ordering = ordering
+        self.name = name
+        self.parameters = parameters
+        self.task = task
+        self.subtask = subtask
+        self.ordering = ordering
 
 
 def get_methods(lines):
@@ -151,18 +158,20 @@ def get_methods(lines):
                 ord.append(lines[i])
                 i += 1
 
-    methods.append(Method(name, param, task, subtask, ord))
-    for i in methods:
-        print('Name:', i.name)
-        print('Parameters:', i.parameters)
-        print('Task:', i.task)
-        print('Subtask', i.subtask)
-        print('Ordering:', i.ordering, '\n')
+    methods = Method(name, param, task, subtask, ord)
+    return methods
+
+    #for i in methods:
+        #print('Name:', i.name)
+        #print('Parameters:', i.parameters)
+        #print('Task:', i.task)
+        #print('Subtask', i.subtask)
+        #print('Ordering:', i.ordering, '\n')
 
 class Task:
     def __init__(self, name, parameters):
-        Task.name = name
-        Task.parameters = parameters
+        self.name = name
+        self.parameters = parameters
 
 def get_tasks(text):
     name = text[0].split()
@@ -180,20 +189,20 @@ def get_tasks(text):
 
 
 
-
 class Domain:
-    def __init__(self, name: object, requirements: object, type: object, predicate: object, task: object = None):
-        Domain.name = name
-        Domain.requirements = requirements
-        Domain.types = type
-        Domain.predicate = predicate
-        Domain.task = task
+    def __init__(self, name: object, requirements: object, type: object, action, predicate: object, method):
+        self.name = name
+        self.requirements = requirements
+        self.types = type
+        self.action = action
+        self.predicate = predicate
+        self.method = method
 
-
-def parser(Name_file):
+def parser2(Name_file):
     a = []
+    actions = []
     first, second = '', '';
-    fifth, actions, third, fourth, part = [], [], [], [], [];
+    fifth, actions, third, fourth, part, sixth = [], [], [], [], [], []
     with open(Name_file) as infile:
         lines = [line.strip() for line in infile]
 
@@ -206,37 +215,59 @@ def parser(Name_file):
             second = get_requirements(lines[i]);
         elif (lines[i].find(':types') != -1):
             third = get_types(i)
+        elif (lines[i].find('(:action') != -1):
+            actions.append(get_actions(get_part(i, Name_file)))
         elif (lines[i].find(':predicates') != -1):
-            fifth = get_predicate(get_part(i, Name_file))
-    Domain(first, second, third, fifth)
+            fifth.append(get_predicate(get_part(i, Name_file)))
+        elif (lines[i].find(':method') != -1):
+            sixth.append(get_methods(get_part(i, Name_file)))
+    domain = Domain(first, second, third, actions, fifth, sixth)
+    return domain
+    
 
-def print_answer():
+def parser(Name_file):
+    a = []
+    actions = []
+    first, second = '', '';
+    fifth, actions, third, fourth, part, sixth = [], [], [], [], [], []
     with open(Name_file) as infile:
         lines = [line.strip() for line in infile]
-    print('Domain name:', Domain.name)
+
+    for i in range(len(lines)):
+        if (lines[i].find('domain') != -1):
+            lines[i] = lines[i].strip('(').strip(')')
+            lines[i] = lines[i].split();
+            first = lines[0][2].split();
+        elif (lines[i].find(':requirements') != -1):
+            second = get_requirements(lines[i]);
+        elif (lines[i].find(':types') != -1):
+            third = get_types(i)
+        elif (lines[i].find('(:action') != -1):
+            actions.append(get_actions(get_part(i, Name_file)))
+        elif (lines[i].find(':predicates') != -1):
+            fifth.append(get_predicate(get_part(i, Name_file)))
+        elif (lines[i].find(':method') != -1):
+            sixth.append(get_methods(get_part(i, Name_file)))
+    domain = Domain(first, second, third, actions, fifth, sixth)
+    print('Domain name:', domain.name)
     print('-----------')
-    print('Requirements:', Domain.requirements)
+    print('Requirements:', domain.requirements)
     print('-------------')
-    print('Types:', Domain.types)
+    print('Types:', domain.types)
     print('------')
-    print('Predicetes:', Domain.predicate)
+    print('Predicetes:', domain.predicate)
     print('-----------')
-    print('Tasks:')
-    print('-------')
-    for i in range(len(lines)):
-        if (lines[i].find('(:task') != -1):
-            get_tasks(get_part(i, Name_file))
-    print('Actions:')
-    print('--------')
-    for i in range(len(lines)):
-        if (lines[i].find('(:action') != -1):
-            get_actions(get_part(i, Name_file))
-    print('Methods:')
-    print('--------')
-    for i in range(len(lines)):
-        if (lines[i]).find('(:method') != -1:
-            get_methods(get_part(i, Name_file))
+    for i in domain.action:
+        print(i.name)
+        print(i.parameters)
+        print(i.precondition)
+        print(i.effect, '\n')
+    for j in domain.method:
+        print(j.name)
+        print(j.parameters)
+        print(j.task)
+        print(j.subtask)
+        print(j.ordering, '\n')
+    return domain
 
-
-parser(Name_file);
-print_answer();
+#parser(Name_file)
