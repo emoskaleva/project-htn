@@ -1,6 +1,6 @@
 import parser as d_p
 import problem as p_p
-import grounding aa g
+import grounding as g
 import sys
 
 def main(argv):
