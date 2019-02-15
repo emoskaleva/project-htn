@@ -58,4 +58,4 @@ def pop(list):
     return param
 
 
-grounding("/Users/liza/domain_robot.pddl", "/Users/liza/problem_robot.pddl")
+#grounding("/Users/liza/domain_robot.pddl", "/Users/liza/problem_robot.pddl")
