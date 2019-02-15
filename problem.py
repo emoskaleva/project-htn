@@ -17,7 +17,7 @@ def get_part(index, file):
             elif lines[i][j] == ')':
                 brackets -= 1
         if brackets == 0:
-            break;
+            break
     return lines[index:end + 1]
 
 
