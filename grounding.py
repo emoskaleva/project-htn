@@ -1,5 +1,5 @@
 import parser as pr
-import problem1234 as prob
+import problem as prob
 import re
 from itertools import combinations
 
