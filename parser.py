@@ -10,7 +10,7 @@ def get_requirements(line):
     return line[1:]
 
 
-def get_types(count):
+def get_types(Name_file, count):
     a = []
     with open(Name_file) as infile:
         lines = [line.strip() for line in infile]
@@ -214,7 +214,7 @@ def parser2(Name_file):
         elif (lines[i].find(':requirements') != -1):
             second = get_requirements(lines[i]);
         elif (lines[i].find(':types') != -1):
-            third = get_types(i)
+            third = get_types(Name_file, i)
         elif (lines[i].find('(:action') != -1):
             actions.append(get_actions(get_part(i, Name_file)))
         elif (lines[i].find(':predicates') != -1):
@@ -241,7 +241,7 @@ def parser(Name_file):
         elif (lines[i].find(':requirements') != -1):
             second = get_requirements(lines[i])
         elif (lines[i].find(':types') != -1):
-            third = get_types(i)
+            third = get_types(Name_file, i)
         elif (lines[i].find('(:action') != -1):
             actions.append(get_actions(get_part(i, Name_file)))
         elif (lines[i].find(':predicates') != -1):
