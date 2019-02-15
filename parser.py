@@ -1,4 +1,4 @@
-Name_file = "/Users/liza/domain_robot.pddl";
+#Name_file = "/Users/liza/domain_robot.pddl";
 import re
 import copy
 
@@ -43,7 +43,7 @@ def get_part(index, file):
             elif lines[i][j] == ')':
                 brackets -= 1
         if brackets == 0:
-            break;
+            break
     return lines[index:end + 1]
 
 
@@ -70,8 +70,8 @@ def get_actions(lines):
         #param[i] = re.sub('[?]', '', param[i])
     for i in range(len(lines)):
         if lines[i].find(':precondition') != -1:
-            end = i;
-            brackets = 0;
+            end = i
+            brackets = 0
             for ir in range(i + 1, len(lines)):
                 end += 1
                 for j in range(len(lines[ir])):
@@ -84,10 +84,10 @@ def get_actions(lines):
                         precond.append(lines[i + 2:end][j])
                     for i in range(len(precond)):
                         precond[i] = re.sub('[)(]', '', precond[i])
-                    break;
+                    break
         elif lines[i].find(':effect') != -1:
-            end = i;
-            brackets = 0;
+            end = i
+            brackets = 0
             for ir in range(i + 1, len(lines)):
                 end += 1
                 for j in range(len(lines[ir])):
@@ -100,7 +100,7 @@ def get_actions(lines):
                         effect.append(lines[i + 2:end][j])
                     for k in range(len(effect)):
                         effect[k] = re.sub('[)(]', '', effect[k])
-                    break;
+                    break
     action = Action(name, param, precond, effect)
     return action
 
@@ -135,8 +135,8 @@ def get_methods(lines):
             #for j in range(1, len(lines[i])):
                 #task.append(lines[i][j])
         elif lines[i].find(':subtask') != -1:
-            end = i;
-            brackets = 0;
+            end = i
+            brackets = 0
             for ir in range(i + 1, len(lines)):
                 end += 1
                 for j in range(len(lines[ir])):
@@ -149,7 +149,7 @@ def get_methods(lines):
                         subtask.append(lines[i + 2:end][j])
                     for k in range(len(subtask)):
                         subtask[k] = re.sub('[)(]', '', subtask[k])
-                    break;
+                    break
         elif lines[i].find(':ordering') != -1:
             lines[i + 2] = re.sub('[)(]', '', lines[i + 2])
             i = i + 2
@@ -201,7 +201,7 @@ class Domain:
 def parser2(Name_file):
     a = []
     actions = []
-    first, second = '', '';
+    first, second = '', ''
     fifth, actions, third, fourth, part, sixth = [], [], [], [], [], []
     with open(Name_file) as infile:
         lines = [line.strip() for line in infile]
@@ -209,8 +209,8 @@ def parser2(Name_file):
     for i in range(len(lines)):
         if (lines[i].find('domain') != -1):
             lines[i] = lines[i].strip('(').strip(')')
-            lines[i] = lines[i].split();
-            first = lines[0][2].split();
+            lines[i] = lines[i].split()
+            first = lines[0][2].split()
         elif (lines[i].find(':requirements') != -1):
             second = get_requirements(lines[i]);
         elif (lines[i].find(':types') != -1):
@@ -228,7 +228,7 @@ def parser2(Name_file):
 def parser(Name_file):
     a = []
     actions = []
-    first, second = '', '';
+    first, second = '', ''
     fifth, actions, third, fourth, part, sixth = [], [], [], [], [], []
     with open(Name_file) as infile:
         lines = [line.strip() for line in infile]
@@ -236,10 +236,10 @@ def parser(Name_file):
     for i in range(len(lines)):
         if (lines[i].find('domain') != -1):
             lines[i] = lines[i].strip('(').strip(')')
-            lines[i] = lines[i].split();
-            first = lines[0][2].split();
+            lines[i] = lines[i].split()
+            first = lines[0][2].split()
         elif (lines[i].find(':requirements') != -1):
-            second = get_requirements(lines[i]);
+            second = get_requirements(lines[i])
         elif (lines[i].find(':types') != -1):
             third = get_types(i)
         elif (lines[i].find('(:action') != -1):
