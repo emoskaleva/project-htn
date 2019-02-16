@@ -258,16 +258,16 @@ def parser(Name_file):
     print('Predicetes:', domain.predicate)
     print('-----------')
     for i in domain.action:
-        print(i.name)
-        print(i.parameters)
-        print(i.precondition)
-        print(i.effect, '\n')
+        print('Name: ', i.name)
+        print('Parameters', i.parameters)
+        print('Precondition', i.precondition)
+        print('Effects:', i.effect, '\n')
     for j in domain.method:
-        print(j.name)
-        print(j.parameters)
-        print(j.task)
-        print(j.subtask)
-        print(j.ordering, '\n')
+        print('Name:', j.name)
+        print('Parameters', j.parameters)
+        print('Task:', j.task)
+        print('Subtask:', j.subtask)
+        print('Ordering:', j.ordering, '\n')
     return domain
 
 #parser(Name_file)
