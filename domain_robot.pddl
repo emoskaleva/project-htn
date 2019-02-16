@@ -129,7 +129,7 @@
         :subtasks
 		    (and
 		        (task0 (move ?loc1 ?loc2 ?d ?rob))
-		        (task1 (open ?loc1 ?loc2 ?d ?rob)
+		        (task1 (open ?loc1 ?loc2 ?d ?rob))
 		        (task2 (pick_up ?obj ?rob ?loc2))
 		        (task3 (move ?loc2 ?loc1 ?d ?rob))
 		    )
@@ -139,6 +139,7 @@
 			    (task1 < task2)
 			    (task2 < task3)
 		    )
+    )
     )
 
 
