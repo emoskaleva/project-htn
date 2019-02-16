@@ -96,9 +96,9 @@ def problem_parser(Name_file):
             lines[i + 1] = re.sub('[)(-]', '', lines[i + 1])
             goal = lines[i + 1].split()
     objects = Problem_object(obj, inits, goal)
-    print(objects.object)
-    print(objects.init)
-    print(objects.goal)
+    print('Объекты:', objects.object)
+    print('Начальное состояние:', objects.init)
+    print('Цель:', objects.goal)
     return objects
 
 #problem_parser(Name_file);
