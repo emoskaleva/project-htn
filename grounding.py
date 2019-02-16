@@ -11,6 +11,10 @@ def grounding(domain_robot, problem_robot):
     for i in pars.action:
         i.parameters = pop(i.parameters)
         ground_action(i.name, i.parameters, dict1(parser.object))
+    for i in pars.method:
+        i.parameters = pop(i.parameters)
+        ground_action(i.name, i.parameters, dict1(parser.object))
+        
     return answer
 
 
