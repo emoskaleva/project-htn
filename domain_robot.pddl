@@ -16,7 +16,7 @@
     )
 
     (:action pick_up
-        :parameters (?obj - Package ?rob - Robot, ?loc - Room)
+        :parameters (?obj - Package ?rob - Robot ?loc - Room)
         :precondition
             (and
                 (armempty ?rob)
@@ -33,7 +33,7 @@
     )
 
     (:action put_down
-        :parameters (?obj - Package ?rob - Robot, ?loc - Room)
+        :parameters (?obj - Package ?rob - Robot ?loc - Room)
         :precondition
             (and
                 (not (armempty))
@@ -50,7 +50,7 @@
     )
 
     (:action open
-        :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door, ?rob - Robot)
+        :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door ?rob - Robot)
         :precondition
             (and
                 (r_in_room ?rob ?loc1)
@@ -64,7 +64,7 @@
     )
 
     (:action move
-        :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door, ?rob - Robot)
+        :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door ?rob - Robot)
         :precondition
             (and
                 (r_in_room ?rob ?loc1)
@@ -85,7 +85,7 @@
 
 
     (:task move_w_pack
-        :parameters (?loc1 - Room ?loc2 - Room ?rob - Robot, ?obj - Package)
+        :parameters (?loc1 - Room ?loc2 - Room ?rob - Robot ?obj - Package)
     )
 
     (:task open_move
@@ -94,7 +94,7 @@
 
 
     (:method open_and_move_to_loc2
-        :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door, ?rob - Robot)
+        :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door ?rob - Robot)
         :task(open_move ?loc1 ?loc2 ?d ?rob)
         :subtasks
 		    (and
@@ -108,7 +108,7 @@
     )
 
     (:method move_with_package_without_door
-        :parameters (?loc1 - Room ?loc2 - Room ?rob - Robot, ?obj - Package)
+        :parameters (?loc1 - Room ?loc2 - Room ?rob - Robot ?obj - Package)
         :task(move_w_pack_w_door ?loc1 ?loc2 ?rob ?obj)
         :subtasks
 		    (and
@@ -124,7 +124,7 @@
     )
 
     (:method come_back_with_package
-        :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door, ?rob - Robot, ?obj - Package)
+        :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door ?rob - Robot ?obj - Package)
         :task(move_w_pack ?loc1 ?loc2 ?d ?rob ?obj)
         :subtasks
 		    (and
