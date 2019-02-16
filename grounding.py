@@ -10,7 +10,7 @@ def grounding(domain_robot, problem_robot):
     parser = prob.problem_parser2(problem_robot)
     for i in pars.action:
         i.parameters = pop(i.parameters)
-        graund_action(i.name, i.parameters, dict1(parser.object))
+        ground_action(i.name, i.parameters, dict1(parser.object))
     return answer
 
 
@@ -28,7 +28,7 @@ def dict1(list):
                 obj[list2].append(list1)
     return obj
 
-def graund_action(name, act, dict):
+def ground_action(name, act, dict):
     room = 0
     door = 0
     pack = 0
