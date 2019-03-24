@@ -90,6 +90,9 @@
     (:task move_w_pack
         :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door ?rob - Robot ?obj - Package)
     )
+    (:task move_2
+        :parameters (?loc1 - Room ?loc2 - Room ?rob - Robot ?obj1 - Package ?obj2 - Package)
+    )
 
     (:task come_back
         :parameters (?loc1 - Room ?loc2 - Room ?d - Room_door ?rob - Robot ?obj - Package)
@@ -115,10 +118,6 @@
 		        (task0 (open ?loc1 ?loc2 ?d ?rob))
 		        (task1 (move ?loc1 ?loc2 ?d ?rob))
 		    )
-		:ordering
-		    (and
-			    (task0 < task1)
-		    )
     )
 
     (:method move_with_package_without_door
@@ -138,11 +137,6 @@
 		        (task0 (pick_up ?obj ?rob ?loc1))
 		        (task1 (move ?rob ?loc1 ?loc2 ?d))
 		        (task2 (put_down ?obj ?rob ?loc2))
-		    )
-		:ordering
-		    (and
-			    (task0 < task1)
-			    (task1 < task2)
 		    )
     )
 
@@ -165,11 +159,6 @@
 		        (task2 (move ?rob ?loc1 ?loc2 ?d))
 		        (task3 (put_down ?obj ?rob ?loc2))
 		    )
-		:ordering
-		    (and
-			    (task0 < task1)
-			    (task1 < task2)
-		    )
     )
 
     (:method come_back_with_package
@@ -190,12 +179,7 @@
 		        (task1 (move ?loc1 ?loc2 ?d ?rob))
 		        (task2 (pick_up ?obj ?rob ?loc2))
 		        (task3 (move ?loc2 ?loc1 ?d ?rob))
-		    )
-		:ordering
-		    (and
-			    (task0 < task1)
-			    (task1 < task2)
-			    (task2 < task3)
+		        (task4 (put_down ?obj ?rob ?loc2))
 		    )
     )
 
@@ -205,7 +189,7 @@
         :precondition
             (and
                 (armempty ?rob)
-                (closed ?d)
+                (not (closed ?d))
                 (not (holding ?rob ?obj))
                 (r_in_room ?rob ?loc1)
                 (not (r_in_room ?rob ?loc2))
@@ -216,15 +200,27 @@
 		        (task0 move_w_pack ?loc1 ?loc2 ?d ?rob ?obj)
 		        (task1 (move ?loc2 ?loc1 ?d ?rob))
 		    )
-		:ordering
+    )
+    (:method 2_pack
+        :parameters (?obj1 - Package  ?obj2 - Package  ?rob - Robot  ?loc1 - Room  ?loc2 - Room  ?d - Room_door  )
+        :task(move_2 ?loc1 ?loc2 ?d ?rob ?obj1 ?obj2)
+        :precondition
+            (and
+                (armempty ?rob)
+                (not (closed ?d))
+                (not (holding ?rob ?obj1))
+                (not (holding ?rob ?obj2))
+                (r_in_room ?rob ?loc1)
+                (not (r_in_room ?rob ?loc2))
+                (door ?loc1 ?loc2 ?d)
+            )
+        :subtasks
 		    (and
-			    (task0 < task1)
-			    (task1 < task2)
-			    (task2 < task3)
+		        (task0 move_w_pack ?loc1 ?loc2 ?d ?rob ?obj1)
+		        (task1 (pick_up ?obj2 ?rob ?loc2))
+		        (task2 (move ?loc2 ?loc1 ?d ?rob))
 		    )
     )
-
-
     )
 
 
