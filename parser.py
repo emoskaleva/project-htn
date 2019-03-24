@@ -1,7 +1,7 @@
-#Name_file = "/Users/liza/Downloads/project-htn-master-5/domain_robot.pddl"
+Name_file = "/Users/liza/Downloads/project-htn-master-5/domain_robot.pddl"
+name = "prec.pddl"
 import re
-import copy
-import timeit
+import itertools
 
 def get_requirements(line):
     line = line.strip('(').strip(')')
@@ -44,6 +44,16 @@ def get_part(index, file):
         if brackets == 0:
             break
     return lines[index:end + 1]
+
+def get_part2(index, file):
+    with open(file) as infile:
+        lines = [line.strip() for line in infile]
+    end = index
+    for i in range(index + 1, len(lines)):
+        if lines[i] is "":
+            end = i
+            break
+    return lines[index + 1:end]
 
 
 class Action:
@@ -248,8 +258,37 @@ def parser2(Name_file):
     #for i in domain.action:
         #print(i.name, i.parameters)
     return domain
-    
 
+
+class Precend:
+    def __init__(self, name, parameters, precond, effect):
+        self.name = name
+        self.parameters = parameters
+        self.precond = precond
+        self.effect = effect
+
+def parser_precend(name):
+    Name, param, precond, effect, precend = [], [], [], [], []
+    with open(name) as infile:
+        lines = [line.strip() for line in infile]
+    for i in range(len(lines)):
+        if (lines[i].find(':Name') != -1):
+            lines[i] = lines[i].split()
+            Name = lines[i + 1].split()[0]
+            param = lines[i + 1].split()[1:]
+        elif (lines[i].find(':Init') != -1):
+            precond.append(get_part2(i, name))
+            precond = list(itertools.chain(*precond))
+        elif (lines[i].find(':Effect') != -1):
+            effect.append(get_part2(i, name))
+            effect = list(itertools.chain(*effect))
+            precend.append(Precend(Name, param, precond, effect))
+            precond = []
+            effect = []
+    return precend
+
+
+parser_precend(name)
 def parser(Name_file):
     a = []
     actions = []
@@ -295,4 +334,4 @@ def parser(Name_file):
         print('Ordering:', j.ordering, '\n')
     return domain
 
-#parser2(Name_file)
+parser2(Name_file)
