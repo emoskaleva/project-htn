@@ -5,3 +5,5 @@
 В папке parser.py реализован черновой вариант парсера домена, в problem.py - задачи. 
 В файлах domain_robot.pddl и problem_robot.pddl находятся актуальные на данный момент домен и задача для робота.
 В папке grounding.py граундер для конкретных объектов из задачи.
+Запускать через main.py с парметрами: domain_robot.pddl problem_robot.pddl prec.pddl
+
