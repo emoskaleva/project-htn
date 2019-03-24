@@ -16,6 +16,99 @@ class Action:
         self.effect = effect
 
 
+
+def dict1(list):
+    obj = dict()
+    for i in range(len(list)):
+        if list[i].find('-') != -1:
+            index = list[i].find('-')
+            list1 = list[i][:index - 1]
+            list2 = list[i][index + 2:]
+            if obj.get(list2) == None:
+                obj[list2] = []
+                obj[list2].append(list1)
+            else:
+                obj[list2].append(list1)
+
+    return obj  # возвращает словарь тип-объект из проблемы
+
+
+
+def dict2(dict1, param):
+    dict3 = dict()
+    for i in range(len(param)):
+        for key, value in dict1.items():
+            for q in range(len(dict1[key])):
+                if dict1[key][q] == param[i]:
+                    if dict3.get(key) == None:
+                        dict3[key] = []
+                        dict3[key].append(param[i])
+                    else:
+                        dict3[key].append(param[i])
+    return dict3
+
+
+def get_prec_effect(dict1, prec, dict2):
+    pr = copy.deepcopy(prec)
+    for i in range(len(pr)):
+        pr[i] = pr[i].split()
+        for k in range(len(pr[i])):
+            for key in dict2.keys():
+                for q in range(len(dict2[key])):
+                    if pr[i][k] == dict2[key][q]:
+                        pr[i][k] = dict1[key][q]
+                        break
+        pr[i] = ' '.join(pr[i])
+
+    return pr
+
+
+class Precend:
+    def __init__(self, name, param, precond, effect):
+        self.name = name
+        self.param = param
+        self.precond = precond
+        self.effect = effect
+
+
+def grounding_precend(file, problem):
+    list4 = []
+    prec = pr.parser_precend(file)
+    parser = prob.problem_parser2(problem)
+    for i in prec:
+        list4.append(ground_precend(i.name, i.parameters, dict1(parser.object), i.precond, i.effect))
+    list4 = list(itertools.chain(*list4))
+    return list4
+
+
+def ground_precend(name, param, dict1, precond, effect):
+    room, door, obj = 0, 0, 0
+    answer = []
+    dict3 = dict()
+    for i in range(len(param)):
+        if param[i] in dict1['Room']:
+            room += 1
+        if param[i] in dict1['Room_door']:
+            door += 1
+        if param[i] in dict1['Package']:
+            obj += 1
+    l1 = list(permutations(dict1['Package'], obj))
+    l2 = list(permutations(dict1['Room'], room))
+    l3 = list(permutations(dict1['Room_door'], door))
+    for i in l1:
+        for j in l2:
+            for k in l3:
+                parameters = list(j + k + ('r',) + i)
+                dict3 = dict2(dict1, parameters)  # словарь тип - обьект для каждого заграундинного действия
+                prec = get_prec_effect(dict3, precond, dict1)
+                eff = get_prec_effect(dict3, effect, dict1)
+                answer.append(Precend(name, parameters, prec, eff))
+    return answer
+
+
+
+
+grounding_precend("prec.pddl", "problem_robot.pddl")
 def grounding_actions(domain_robot, problem_robot):
     pars = pr.parser2(domain_robot)
     list3 = []
@@ -89,37 +182,6 @@ def ground_methods(name, parameters, param2, dict, prec, subtask, task, ordering
     return answer2
 
 
-
-def dict2(dict1, param):
-    dict3 = dict()
-    for i in range(len(param)):
-        for key, value in dict1.items():
-            for q in range(len(dict1[key])):
-                if dict1[key][q] == param[i]:
-                    if dict3.get(key) == None:
-                        dict3[key] = []
-                        dict3[key].append(param[i])
-                    else:
-                        dict3[key].append(param[i])
-    return dict3
-
-
-def dict1(list):
-    obj = dict()
-    for i in range(len(list)):
-        if list[i].find('-') != -1:
-            index = list[i].find('-')
-            list1 = list[i][:index - 1]
-            list2 = list[i][index + 2:]
-            if obj.get(list2) == None:
-                obj[list2] = []
-                obj[list2].append(list1)
-            else:
-                obj[list2].append(list1)
-
-    return obj  # возвращает словарь тип-объект из проблемы
-
-
 def ground_action(name, act, parameters, dict, precond, effect):
     room = 0
     door = 0
@@ -147,20 +209,6 @@ def ground_action(name, act, parameters, dict, precond, effect):
                 prec = get_prec_effect(dict3, precond, dict1(parameters))
                 answer1.append(Action(name, param, prec, eff))
     return answer1
-
-def get_prec_effect(dict1, prec, dict2):
-    pr = copy.deepcopy(prec)
-    for i in range(len(pr)):
-        pr[i] = pr[i].split()
-        for k in range(len(pr[i])):
-            for key in dict2.keys():
-                for q in range(len(dict2[key])):
-                    if pr[i][k] == dict2[key][q]:
-                        pr[i][k] = dict1[key][q]
-                        break;
-        pr[i] = ' '.join(pr[i])
-
-    return pr
 
 
 def pop(list):   #возвращает вместо параметра только тип объектов для каждого действия
