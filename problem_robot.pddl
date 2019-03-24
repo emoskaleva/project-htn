@@ -4,6 +4,7 @@
     (:objects
         r - Robot
         obj1 - Package
+        obj2 - Package
         loc1 - Room
         loc2 - Room
         loc3 - Room
@@ -11,15 +12,15 @@
     )
 
     (:init
-        (armempty ?r)
-        (not (holding ?r ?obj1))
-        (r_in_room ?r ?loc2)
-        (not (r_in_room ?r ?loc3))
-        (closed ?d)
-        (door ?loc2 ?loc3 ?d)
+    (armempty ?r)
+    (not (closed ?d))
+    (not (holding ?r ?obj1))
+    (r_in_room ?r ?loc1)
+    (not (r_in_room ?r ?loc2))
+    (door ?loc1 ?loc2 ?d)
     )
 
     (:goal
-        (come_back loc2 loc3 d r obj1)
+        (come_back ?loc1 ?loc2 ?d ?r ?obj1)
     )
 )
