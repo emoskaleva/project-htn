@@ -288,7 +288,7 @@ def parser_precend(name):
     return precend
 
 
-parser_precend(name)
+#parser_precend(name)
 def parser(Name_file):
     a = []
     actions = []
@@ -334,4 +334,4 @@ def parser(Name_file):
         print('Ordering:', j.ordering, '\n')
     return domain
 
-parser2(Name_file)
+#parser2(Name_file)
