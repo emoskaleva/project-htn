@@ -108,7 +108,7 @@ def ground_precend(name, param, dict1, precond, effect):
 
 
 
-grounding_precend("prec.pddl", "problem_robot.pddl")
+#grounding_precend("prec.pddl", "problem_robot.pddl")
 def grounding_actions(domain_robot, problem_robot):
     pars = pr.parser2(domain_robot)
     list3 = []
